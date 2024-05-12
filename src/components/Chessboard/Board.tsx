@@ -1,39 +1,56 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Piece from "../Piece/Piece";
 import "./Board.css";
-import { platform } from "os";
+import Rules from "../../rules/Rules";
 
 const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
 const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
-interface Tile {
+export interface Tile {
   image: string;
   x: number;
   y: number;
+  type: PieceType;
+  team: TeamType
+}
+
+export enum TeamType {
+  BLACK,
+  WHITE
+}
+
+export enum PieceType {
+  PAWN,
+  BISHOP,
+  KNIGHT,
+  ROOK,
+  QUEEN,
+  KING
 }
 
 const initialBoardState: Tile[] = [];
 
     // populates the board with pieces
 for (let p = 0; p < 2; p++) {
-  const type = p === 0 ? "black" : "white";
-      const y = p === 0 ? 7 : 0;
+  const teamType = (p === 0) ? TeamType.BLACK : TeamType.WHITE
+  const type = (teamType === TeamType.BLACK) ? "black" : "white";
+  const y = (teamType === TeamType.BLACK) ? 7 : 0;
 
-  initialBoardState.push({ image: `assets/images/rook-${type}.png`, x: 0, y });
-  initialBoardState.push({ image: `assets/images/rook-${type}.png`, x: 7, y });
-  initialBoardState.push({ image: `assets/images/knight-${type}.png`, x: 1, y });
-  initialBoardState.push({ image: `assets/images/knight-${type}.png`, x: 6, y });
-  initialBoardState.push({ image: `assets/images/bishop-${type}.png`, x: 2, y });
-  initialBoardState.push({ image: `assets/images/bishop-${type}.png`, x: 5, y });
-  initialBoardState.push({ image: `assets/images/queen-${type}.png`, x: 3, y });
-  initialBoardState.push({ image: `assets/images/king-${type}.png`, x: 4, y });
+  initialBoardState.push({ image: `assets/images/rook-${type}.png`, x: 0, y, type: PieceType.ROOK, team: teamType });
+  initialBoardState.push({ image: `assets/images/rook-${type}.png`, x: 7, y, type: PieceType.ROOK, team: teamType });
+  initialBoardState.push({ image: `assets/images/knight-${type}.png`, x: 1, y, type: PieceType.KNIGHT, team: teamType });
+  initialBoardState.push({ image: `assets/images/knight-${type}.png`, x: 6, y, type: PieceType.KNIGHT, team: teamType });
+  initialBoardState.push({ image: `assets/images/bishop-${type}.png`, x: 2, y, type: PieceType.BISHOP, team: teamType });
+  initialBoardState.push({ image: `assets/images/bishop-${type}.png`, x: 5, y, type: PieceType.BISHOP, team: teamType });
+  initialBoardState.push({ image: `assets/images/queen-${type}.png`, x: 3, y, type: PieceType.QUEEN, team: teamType });
+  initialBoardState.push({ image: `assets/images/king-${type}.png`, x: 4, y , type: PieceType.KNIGHT, team: teamType });
 }
 for (let i = 0; i < 8; i++) {
-  initialBoardState.push({ image: "assets/images/pawn-black.png", x: i, y: 6 });
+  initialBoardState.push({ image: "assets/images/pawn-black.png", x: i, y: 6, type: PieceType.PAWN, team: TeamType.BLACK });
 }
 
 for (let i = 0; i < 8; i++) {
-  initialBoardState.push({ image: "assets/images/pawn-white.png", x: i, y: 1 });
+  initialBoardState.push({ image: "assets/images/pawn-white.png", x: i, y: 1, type: PieceType.PAWN, team: TeamType.WHITE });
 }
 
 export default function Board() {
@@ -42,6 +59,7 @@ export default function Board() {
   const [gridY, setGridY] = useState(0);
   const [pieces, setPieces] = useState<Tile[]>(initialBoardState);
   const chessboardRef = useRef<HTMLDivElement>(null);
+  const rules = new Rules();
 
   function grabPiece(e: React.MouseEvent) {
     const element = e.target as HTMLElement;
@@ -98,19 +116,41 @@ export default function Board() {
   function dropPiece(e: React.MouseEvent) {
     const chessboard = chessboardRef.current;
     if (activePiece && chessboard) {
-      setPieces(value => {
-        const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
-        const y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100));
+      const x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
+      const y = Math.abs(
+        Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100)
+      );
 
-        const pieces = value.map(p => {
-          if(p.x === gridX && p.y === gridY) {
+      // updates the piece position
+      setPieces((value) => {
+        const pieces = value.map((p) => {
+          if (p.x === gridX && p.y === gridY) {
+            const validMove = rules.isValidMove(
+              gridX,
+              gridY,
+              x,
+              y,
+              p.type,
+              p.team,
+              value
+            );
+
+            if (validMove) {
+              p.x = x;
+              p.y = y;
+            } else {
+              activePiece.style.position = "relative";
+              activePiece.style.removeProperty("top");
+              activePiece.style.removeProperty("left");
+            }
+
             p.x = x;
             p.y = y;
           }
           return p;
-        })
+        });
         return pieces;
-      })
+      });
       setActivePiece(null);
     }
   }
