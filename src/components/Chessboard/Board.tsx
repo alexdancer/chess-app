@@ -11,12 +11,12 @@ export interface Tile {
   x: number;
   y: number;
   type: PieceType;
-  team: TeamType
+  team: TeamType;
 }
 
 export enum TeamType {
   BLACK,
-  WHITE
+  WHITE,
 }
 
 export enum PieceType {
@@ -25,32 +25,92 @@ export enum PieceType {
   KNIGHT,
   ROOK,
   QUEEN,
-  KING
+  KING,
 }
 
 const initialBoardState: Tile[] = [];
 
-    // populates the board with pieces
+// populates the board with pieces
 for (let p = 0; p < 2; p++) {
-  const teamType = (p === 0) ? TeamType.BLACK : TeamType.WHITE
-  const type = (teamType === TeamType.BLACK) ? "black" : "white";
-  const y = (teamType === TeamType.BLACK) ? 7 : 0;
+  const teamType = p === 0 ? TeamType.BLACK : TeamType.WHITE;
+  const type = teamType === TeamType.BLACK ? "black" : "white";
+  const y = teamType === TeamType.BLACK ? 7 : 0;
 
-  initialBoardState.push({ image: `assets/images/rook-${type}.png`, x: 0, y, type: PieceType.ROOK, team: teamType });
-  initialBoardState.push({ image: `assets/images/rook-${type}.png`, x: 7, y, type: PieceType.ROOK, team: teamType });
-  initialBoardState.push({ image: `assets/images/knight-${type}.png`, x: 1, y, type: PieceType.KNIGHT, team: teamType });
-  initialBoardState.push({ image: `assets/images/knight-${type}.png`, x: 6, y, type: PieceType.KNIGHT, team: teamType });
-  initialBoardState.push({ image: `assets/images/bishop-${type}.png`, x: 2, y, type: PieceType.BISHOP, team: teamType });
-  initialBoardState.push({ image: `assets/images/bishop-${type}.png`, x: 5, y, type: PieceType.BISHOP, team: teamType });
-  initialBoardState.push({ image: `assets/images/queen-${type}.png`, x: 3, y, type: PieceType.QUEEN, team: teamType });
-  initialBoardState.push({ image: `assets/images/king-${type}.png`, x: 4, y , type: PieceType.KNIGHT, team: teamType });
+  initialBoardState.push({
+    image: `assets/images/rook-${type}.png`,
+    x: 0,
+    y,
+    type: PieceType.ROOK,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/rook-${type}.png`,
+    x: 7,
+    y,
+    type: PieceType.ROOK,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/knight-${type}.png`,
+    x: 1,
+    y,
+    type: PieceType.KNIGHT,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/knight-${type}.png`,
+    x: 6,
+    y,
+    type: PieceType.KNIGHT,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/bishop-${type}.png`,
+    x: 2,
+    y,
+    type: PieceType.BISHOP,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/bishop-${type}.png`,
+    x: 5,
+    y,
+    type: PieceType.BISHOP,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/queen-${type}.png`,
+    x: 3,
+    y,
+    type: PieceType.QUEEN,
+    team: teamType,
+  });
+  initialBoardState.push({
+    image: `assets/images/king-${type}.png`,
+    x: 4,
+    y,
+    type: PieceType.KNIGHT,
+    team: teamType,
+  });
 }
 for (let i = 0; i < 8; i++) {
-  initialBoardState.push({ image: "assets/images/pawn-black.png", x: i, y: 6, type: PieceType.PAWN, team: TeamType.BLACK });
+  initialBoardState.push({
+    image: "assets/images/pawn-black.png",
+    x: i,
+    y: 6,
+    type: PieceType.PAWN,
+    team: TeamType.BLACK,
+  });
 }
 
 for (let i = 0; i < 8; i++) {
-  initialBoardState.push({ image: "assets/images/pawn-white.png", x: i, y: 1, type: PieceType.PAWN, team: TeamType.WHITE });
+  initialBoardState.push({
+    image: "assets/images/pawn-white.png",
+    x: i,
+    y: 1,
+    type: PieceType.PAWN,
+    team: TeamType.WHITE,
+  });
 }
 
 export default function Board() {
@@ -66,7 +126,9 @@ export default function Board() {
     const chessboard = chessboardRef.current;
     if (element.classList.contains("chess-piece") && chessboard) {
       setGridX(Math.floor((e.clientX - chessboard.offsetLeft) / 100));
-      setGridY(Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100)));
+      setGridY(
+        Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))
+      );
 
       const x = e.clientX - 50;
       const y = e.clientY - 50;
@@ -110,6 +172,9 @@ export default function Board() {
       } else {
         activePiece.style.top = `${y}px`;
       }
+
+      activePiece.style.left = (x < minX) ? `${minX}px` : `${x}px`;
+      activePiece.style.top = (y < minY) ? `${minY}px` : `${y}px`;
     }
   }
 
@@ -143,9 +208,6 @@ export default function Board() {
               activePiece.style.removeProperty("top");
               activePiece.style.removeProperty("left");
             }
-
-            p.x = x;
-            p.y = y;
           }
           return p;
         });

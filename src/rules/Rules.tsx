@@ -13,6 +13,10 @@ export default class Rules {
     }
   }
 
+  TileIsOccupiedByOpponent(x: number, y: number, boardState: Tile[], team: TeamType) {
+    
+  }
+
   isValidMove(
     prevX: number,
     prevY: number,
@@ -30,9 +34,9 @@ export default class Rules {
     console.log(`Team: (${team})`);
 
     if (type === PieceType.PAWN) {
-      const specialRow = team === TeamType.WHITE ? 1 : 6;
-      const pawnDirection = team === TeamType.WHITE ? 1 : -1;
-
+      const specialRow = (team === TeamType.WHITE) ? 1 : 6;
+      const pawnDirection = (team === TeamType.WHITE) ? 1 : -1;
+      // movement logic
       if (
         prevX === x &&
         prevY === specialRow &&
@@ -48,6 +52,14 @@ export default class Rules {
         if (!this.tileIsOccupied(x, y, boardState)) {
           return true;
         }
+      }
+      // attack logic
+      else if(x - prevX === -1 && y - prevY === pawnDirection) {
+        // attack in upper on bottom left corner
+        console.log("upper / bottom left")
+      } else if(x - prevX === 1 && y - prevY === pawnDirection) {
+        // attack in the upper or bottom right corner
+        console.log("upper / bottom right") 
       }
     }
     return false;
