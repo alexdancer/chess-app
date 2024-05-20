@@ -12,6 +12,7 @@ export interface Tile {
   y: number;
   type: PieceType;
   team: TeamType;
+  enPassant?: boolean
 }
 
 export enum TeamType {
@@ -189,6 +190,8 @@ export default function Board() {
       const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY);
       const attackedPiece = pieces.find(p => p.x === x && p.y === y);
 
+
+
       if(currentPiece){
         const validMove = rules.isValidMove(
           gridX,
@@ -199,18 +202,55 @@ export default function Board() {
           currentPiece?.team,
           pieces
         );
-        // a reduce function
-        // results -> array of results
-        // piece -> current piece we are handling
-        if (validMove) {
+
+        const isEnPassantMove = rules.isEnPassantMove(
+          gridX, gridY,
+          x,
+          y,
+          currentPiece.type,
+          currentPiece.team,
+          pieces
+        );
+
+        const pawnDirection = currentPiece.team === TeamType.WHITE ? 1 : -1;
+
+        if(isEnPassantMove) {
+           const updatedPieces = pieces.reduce((results, piece) => {
+            if(piece.x === gridX && piece.y === gridY) {
+              piece.enPassant = false;
+              piece.x = x;
+              piece.y = y;
+              results.push(piece);
+            } else if(!(piece.x === x && piece.y === y - pawnDirection)) {
+              if(piece.type === PieceType.PAWN) {
+                piece.enPassant = false;
+              }
+              results.push(piece);
+            }
+
+            return results;
+           }, [] as Tile[])
+
+           setPieces(updatedPieces)
+
+        } else if (validMove) {
           // updates piece position
-          // and if a piece is attacked, removed it
+          // and if a piece is attacked, remove it
           const updatedPieces = pieces.reduce((results, piece) => {
-            if (piece.x === currentPiece.x && piece.y === currentPiece.y) {
+            // if piece is moving
+            if (piece.x === gridX && piece.y === gridY) {
+              if(Math.abs(gridY - y) === 2 && piece.type === PieceType.PAWN) {
+                piece.enPassant = true;
+              } else {
+                piece.enPassant = false;
+              }
               piece.x = x;
               piece.y = y;
               results.push(piece);
             } else if (!(piece.x === x && piece.y === y)) {
+              if(piece.type === PieceType.PAWN) {
+                piece.enPassant = false;
+              }
               results.push(piece);
             }
 
@@ -219,21 +259,6 @@ export default function Board() {
 
           setPieces(updatedPieces)
 
-          // setPieces((value) => {
-          //   const pieces = value.reduce((results, piece) => {
-          //     if (piece.x === currentPiece.x && piece.y === currentPiece.y) {
-          //       piece.x = x;
-          //       piece.y = y;
-          //       results.push(piece);
-          //     } else if (!(piece.x === x && piece.y === y)) {
-          //       results.push(piece);
-          //     }
-
-          //     return results;
-          //   }, [] as Tile[]);
-
-          //   return pieces;
-          // });
         } else {
           activePiece.style.position = "relative";
           activePiece.style.removeProperty("top");
@@ -241,32 +266,6 @@ export default function Board() {
         }
       }
       // updates the piece position
-      setPieces((value) => {
-        const pieces = value.map((p) => {
-          if (p.x === gridX && p.y === gridY) {
-            const validMove = rules.isValidMove(
-              gridX,
-              gridY,
-              x,
-              y,
-              p.type,
-              p.team,
-              value
-            )
-
-            if (validMove) {
-              p.x = x;
-              p.y = y;
-            } else {
-              activePiece.style.position = "relative";
-              activePiece.style.removeProperty("top");
-              activePiece.style.removeProperty("left");
-            }
-          }
-          return p;
-        });
-        return pieces;
-      });
       setActivePiece(null);
     }
   }

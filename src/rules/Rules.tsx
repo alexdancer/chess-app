@@ -18,7 +18,33 @@ export default class Rules {
       return true;
     } else {
       return false;
+    } 
+  }
+
+  // does the special enPassant move for pawn
+  isEnPassantMove(
+    prevX: number,
+    prevY: number,
+    x: number,
+    y: number,
+    type: PieceType,
+    team: TeamType,
+    boardState: Tile[]
+    ) {
+    const pawnDirection = team === TeamType.WHITE ? 1 : -1;
+
+    if(type === PieceType.PAWN) {
+      if((x - prevX === -1 || x - prevX === 1) && y - prevY === pawnDirection) {
+        const piece = boardState.find(
+          (p) => p.x === x && p.y === y - pawnDirection && p.enPassant
+        );
+        
+        if(piece) {
+          return true
+        }
+      }
     }
+    return false;
   }
 
   isValidMove(
@@ -30,17 +56,11 @@ export default class Rules {
     team: TeamType,
     boardState: Tile[]
   ) {
-    // console.log("Checking the move...");
-    // console.log(`Previous location: (${prevX},${prevY})`);
-    // console.log(`Current location: (${x},${y})`);
-    // console.log(`Piece Type: (${type})`);
-    // console.log(`Piece Type: (${type})`);
-    // console.log(`Team: (${team})`);
 
     if (type === PieceType.PAWN) {
       const specialRow = (team === TeamType.WHITE) ? 1 : 6;
       const pawnDirection = (team === TeamType.WHITE) ? 1 : -1;
-      
+
       // movement logic
       if (
         prevX === x &&
