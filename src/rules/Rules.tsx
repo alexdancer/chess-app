@@ -36,14 +36,14 @@ export default class Rules {
     if(type === PieceType.PAWN) {
       if((x - prevX === -1 || x - prevX === 1) && y - prevY === pawnDirection) {
         const piece = boardState.find(
-          (p) => p.x === x && p.y === y - pawnDirection && p.enPassant
+          (p) => p.x === x && p.y === (y - pawnDirection) && p.enPassant
         );
-        
-        if(piece) {
+         if(piece) {
           return true
         }
       }
     }
+
     return false;
   }
 

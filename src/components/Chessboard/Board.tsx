@@ -2,10 +2,7 @@ import { useRef, useState } from "react";
 import Piece from "../Piece/Piece";
 import "./Board.css";
 import Rules from "../../rules/Rules";
-
-const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
-const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
-
+import { verticalAxis, horizontalAxis } from "../../Constants"
 export interface Tile {
   image: string;
   x: number;
@@ -188,9 +185,6 @@ export default function Board() {
       );
 
       const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY);
-      const attackedPiece = pieces.find(p => p.x === x && p.y === y);
-
-
 
       if(currentPiece){
         const validMove = rules.isValidMove(
@@ -233,7 +227,7 @@ export default function Board() {
 
            setPieces(updatedPieces)
 
-        } else if (validMove) {
+        } else if(validMove) {
           // updates piece position
           // and if a piece is attacked, remove it
           const updatedPieces = pieces.reduce((results, piece) => {
