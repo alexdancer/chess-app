@@ -1,7 +1,7 @@
 import { PieceType, TeamType, Tile, Position, samePosition } from "../Constants";
 
 export default class Rules {
-  
+
   tileIsEmptyOrOccupiedByOpponent(
     position: Position,
     boardState: Tile[],
@@ -124,8 +124,9 @@ export default class Rules {
           return true;
         }
       }
+
+    // KNIGHT LOGIC
     } else if (type === PieceType.KNIGHT) {
-      // movement for knight
       for (let i = -1; i < 2; i += 2) {
         for (let j = -1; j < 2; j += 2) {
           // TOP AND BOTTOM MOVEMENT
