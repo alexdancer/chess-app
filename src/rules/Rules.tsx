@@ -148,7 +148,78 @@ export default class Rules {
           }
         }
       }
+      // BISHOP LOGIC
+    } else if(type === PieceType.BISHOP) {
+
+      for(let i = 1; i < 8; i++) {
+
+        // UP RIGHT MOVEMENT
+        if(desiredPosition.x > initialPosition.x && desiredPosition.y > initialPosition.y) {
+          let passedPosition: Position = {x: initialPosition.x + i, y: initialPosition.y + i}
+          // Checking if tile is destination tile
+          if(passedPosition.x === desiredPosition.x && passedPosition.y === desiredPosition.y) {
+            // Dealing with destination tile
+            if(this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
+              return true;
+            }
+          } else {
+            // Dealing with passing tile
+            if(this.tileIsOccupied(passedPosition, boardState)) {
+              break;
+            }
+          }
+        }
+
+        // bottom right movement
+        if(desiredPosition.x > initialPosition.x && desiredPosition.y < initialPosition.y) {
+           let passedPosition: Position = {x: initialPosition.x + i, y: initialPosition.y - i}
+           // Checking if tile is the destination tile
+          if(passedPosition.x === desiredPosition.x && passedPosition.y === desiredPosition.y) {
+            // Dealing with destination tile
+            if(this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
+              return true;
+            }
+          } else {
+            if(this.tileIsOccupied(passedPosition, boardState)) {
+              break;
+            }
+          }
+        }
+
+        // bottom left movement
+        if(desiredPosition.x < initialPosition.x && desiredPosition.y < initialPosition.y) {
+          let passedPosition: Position = {x: initialPosition.x - i, y: initialPosition.y - i}
+           // Checking if tile is the destination tile
+           if(passedPosition.x === desiredPosition.x && passedPosition.y === desiredPosition.y) {
+            // Dealing with destination tile
+            if(this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
+              return true;
+            }
+          } else {
+            if(this.tileIsOccupied(passedPosition, boardState)) {
+              break;
+            }
+          }
+        }
+
+        // top left movement
+        if(desiredPosition.x < initialPosition.x && desiredPosition.y > initialPosition.y) {
+          let passedPosition: Position = {x: initialPosition.x - i, y: initialPosition.y + i}
+           // Checking if tile is the destination tile
+           if(passedPosition.x === desiredPosition.x && passedPosition.y === desiredPosition.y) {
+            // Dealing with destination tile
+            if(this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
+              return true;
+            }
+          } else {
+            if(this.tileIsOccupied(passedPosition, boardState)) {
+              break;
+            }
+          }
+        }
+      }
     }
+
     return false;
   }
 }
