@@ -108,7 +108,6 @@ export default class Rules {
       desiredPosition.y - initialPosition.y === pawnDirection
     ) {
       // attack in upper on bottom left corner
-      console.log("upper / bottom left");
       if (this.tileIsOccupiedByOpponent(desiredPosition, boardState, team)) {
         return true;
       }
@@ -117,7 +116,6 @@ export default class Rules {
       desiredPosition.y - initialPosition.y === pawnDirection
     ) {
       // attack in the upper or bottom right corner
-      console.log("upper / bottom right");
       if (this.tileIsOccupiedByOpponent(desiredPosition, boardState, team)) {
         return true;
       }
@@ -174,27 +172,12 @@ export default class Rules {
   ): boolean {
     for (let i = 1; i < 8; i++) {
       // UP RIGHT MOVEMENT
-      if (
-        desiredPosition.x > initialPosition.x &&
-        desiredPosition.y > initialPosition.y
-      ) {
-        let passedPosition: Position = {
-          x: initialPosition.x + i,
-          y: initialPosition.y + i,
-        };
+      if (desiredPosition.x > initialPosition.x && desiredPosition.y > initialPosition.y) {
+        let passedPosition: Position = {x: initialPosition.x + i, y: initialPosition.y + i};
         // Checking if tile is destination tile
-        if (
-          passedPosition.x === desiredPosition.x &&
-          passedPosition.y === desiredPosition.y
-        ) {
+        if (samePosition(passedPosition, desiredPosition)) {
           // Dealing with destination tile
-          if (
-            this.tileIsEmptyOrOccupiedByOpponent(
-              passedPosition,
-              boardState,
-              team
-            )
-          ) {
+          if (this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
             return true;
           }
         } else {
@@ -209,23 +192,11 @@ export default class Rules {
         desiredPosition.x > initialPosition.x &&
         desiredPosition.y < initialPosition.y
       ) {
-        let passedPosition: Position = {
-          x: initialPosition.x + i,
-          y: initialPosition.y - i,
-        };
+        let passedPosition: Position = {x: initialPosition.x + i, y: initialPosition.y - i};
         // Checking if tile is the destination tile
-        if (
-          passedPosition.x === desiredPosition.x &&
-          passedPosition.y === desiredPosition.y
-        ) {
+        if (samePosition(passedPosition, desiredPosition)) {
           // Dealing with destination tile
-          if (
-            this.tileIsEmptyOrOccupiedByOpponent(
-              passedPosition,
-              boardState,
-              team
-            )
-          ) {
+          if (this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
             return true;
           }
         } else {
@@ -235,27 +206,12 @@ export default class Rules {
         }
       }
       // bottom left movement
-      if (
-        desiredPosition.x < initialPosition.x &&
-        desiredPosition.y < initialPosition.y
-      ) {
-        let passedPosition: Position = {
-          x: initialPosition.x - i,
-          y: initialPosition.y - i,
-        };
+      if (desiredPosition.x < initialPosition.x && desiredPosition.y < initialPosition.y) {
+        let passedPosition: Position = {x: initialPosition.x - i,y: initialPosition.y - i};
         // Checking if tile is the destination tile
-        if (
-          passedPosition.x === desiredPosition.x &&
-          passedPosition.y === desiredPosition.y
-        ) {
+        if (samePosition(passedPosition, desiredPosition)) {
           // Dealing with destination tile
-          if (
-            this.tileIsEmptyOrOccupiedByOpponent(
-              passedPosition,
-              boardState,
-              team
-            )
-          ) {
+          if (this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
             return true;
           }
         } else {
@@ -265,27 +221,12 @@ export default class Rules {
         }
       }
       // top left movement
-      if (
-        desiredPosition.x < initialPosition.x &&
-        desiredPosition.y > initialPosition.y
-      ) {
-        let passedPosition: Position = {
-          x: initialPosition.x - i,
-          y: initialPosition.y + i,
-        };
+      if (desiredPosition.x < initialPosition.x && desiredPosition.y > initialPosition.y) {
+        let passedPosition: Position = {x: initialPosition.x - i,y: initialPosition.y + i};
         // Checking if tile is the destination tile
-        if (
-          passedPosition.x === desiredPosition.x &&
-          passedPosition.y === desiredPosition.y
-        ) {
+        if (samePosition(passedPosition, desiredPosition)) {
           // Dealing with destination tile
-          if (
-            this.tileIsEmptyOrOccupiedByOpponent(
-              passedPosition,
-              boardState,
-              team
-            )
-          ) {
+          if (this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
             return true;
           }
         } else {
@@ -308,21 +249,9 @@ export default class Rules {
         for (let i = 1; i < 8; i++) {
           let multiplier = desiredPosition.y < initialPosition.y ? -1 : 1;
 
-          let passedPosition: Position = {
-            x: initialPosition.x,
-            y: initialPosition.y + i * multiplier,
-          };
-          if (
-            passedPosition.x === desiredPosition.x &&
-            passedPosition.y === desiredPosition.y
-          ) {
-            if (
-              this.tileIsEmptyOrOccupiedByOpponent(
-                passedPosition,
-                boardState,
-                team
-              )
-            ) {
+          let passedPosition: Position = {x: initialPosition.x,y: initialPosition.y + i * multiplier};
+          if (samePosition(passedPosition, desiredPosition)) {
+            if (this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)) {
               return true;
             }
           } else {
@@ -337,14 +266,8 @@ export default class Rules {
         for (let i = 1; i < 8; i++) {
           let multiplier = desiredPosition.x < initialPosition.x ? -1 : 1;
 
-          let passedPosition: Position = {
-            x: initialPosition.x + i * multiplier,
-            y: initialPosition.y,
-          };
-          if (
-            passedPosition.x === desiredPosition.x &&
-            passedPosition.y === desiredPosition.y
-          ) {
+          let passedPosition: Position = {x: initialPosition.x + i * multiplier,y: initialPosition.y};
+          if (samePosition(passedPosition, desiredPosition)) {
             if (
               this.tileIsEmptyOrOccupiedByOpponent(
                 passedPosition,
@@ -373,7 +296,50 @@ export default class Rules {
     for (let i = 1; i < 8; i++) {
       // Diagonal
       let multiplierX;
-      let multiplierY
+      let multiplierY;
+      if(desiredPosition.x < initialPosition.x) {
+        multiplierX = -1;
+      } else if(desiredPosition.x > initialPosition.x) {
+        multiplierX = 1;
+      } else {
+        multiplierX = 0;
+      }
+
+      if(desiredPosition.y < initialPosition.y) {
+        multiplierY = -1
+      } else if(desiredPosition.y > initialPosition.y) {
+        multiplierY = 1
+      } else {
+        multiplierY = 0
+      }
+
+      let passedPosition: Position = {x: initialPosition.x + (i*multiplierX), y: initialPosition.y + (i*multiplierY)};
+
+      if (samePosition(passedPosition, desiredPosition)) {
+        if (
+          this.tileIsEmptyOrOccupiedByOpponent(passedPosition, boardState, team)
+        ) {
+          return true;
+        }
+      } else {
+        if (this.tileIsOccupied(passedPosition, boardState)) {
+          break;
+        }
+      }
+    }
+    return false
+  }
+
+  kingMove(
+    initialPosition: Position, 
+    desiredPosition: Position,
+    team: TeamType,
+    boardState: Tile[]
+  ): boolean {
+    for (let i = 1; i < 2; i++) {
+      // Diagonal
+      let multiplierX;
+      let multiplierY;
       if(desiredPosition.x < initialPosition.x) {
         multiplierX = -1;
       } else if(desiredPosition.x > initialPosition.x) {
@@ -432,7 +398,7 @@ export default class Rules {
         validMode = this.queenMove(initialPosition, desiredPosition, team,boardState);
         break;
       case PieceType.KING:
-
+        validMode = this.kingMove(initialPosition, desiredPosition, team,boardState);
     }
 
     return validMode;
