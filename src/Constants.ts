@@ -39,8 +39,8 @@ export const initialBoardState: Tile[] = [
   {
     image: `assets/images/rook-black.png`,
     position: {
-      x: 4,
-      y: 3,
+      x: 0,
+      y: 7,
     },
     type: PieceType.ROOK,
     team: TeamType.BLACK,
