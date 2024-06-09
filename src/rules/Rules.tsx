@@ -1,5 +1,18 @@
 import { PieceType, TeamType, Tile, Position } from "../Constants";
-import { pawnMove, knightMove, bishopMove, rookMove, queenMove, kingMove} from './pieceRules';
+import {
+  pawnMove,
+  knightMove,
+  bishopMove,
+  rookMove,
+  queenMove,
+  kingMove,
+  getPossibleMoves,
+  getPossibleKnightMoves,
+  getPossibleBishopMoves,
+  getPossibleRookMoves,
+  getPossibleQueenMoves,
+  getPossibleKingMoves,
+} from "./pieceRules";
 
 export default class Rules {
   // does the special enPassant move for pawn
@@ -62,5 +75,24 @@ export default class Rules {
     }
 
     return validMode;
+  }
+
+  getValidMoves(piece: Tile, boardState: Tile[]) : Position[] {
+    switch(piece.type) {
+      case PieceType.PAWN:
+        return getPossibleMoves(piece, boardState);
+      case PieceType.KNIGHT:
+        return getPossibleKnightMoves(piece, boardState);
+      case PieceType.BISHOP:
+        return getPossibleBishopMoves(piece, boardState);
+      case PieceType.ROOK:
+        return getPossibleRookMoves(piece, boardState);
+      case PieceType.QUEEN:
+        return getPossibleQueenMoves(piece, boardState);
+      case PieceType.KING:
+        return getPossibleKingMoves(piece, boardState)
+      default:
+        return [];
+    }
   }
 }

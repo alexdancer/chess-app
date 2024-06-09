@@ -1,5 +1,5 @@
 import { Position, TeamType, Tile, samePosition } from "../../Constants";
-import { tileIsEmptyOrOccupiedByOpponent, tileIsOccupied } from "./GeneralRules";
+import { tileIsEmptyOrOccupiedByOpponent, tileIsOccupied, tileIsOccupiedByOpponent } from "./GeneralRules";
 
 
 export const rookMove = (
@@ -48,4 +48,60 @@ export const rookMove = (
       }
     }
   return false;
+}
+
+export const getPossibleRookMoves = (rook: Tile, boardState: Tile[]): Position[] => {
+  const possibleMoves: Position[] = [];
+  
+  // Top movement
+  for(let i = 1; i < 8; i++) {
+    const destination: Position = {x: rook.position.x, y: rook.position.y + i};
+    if(!tileIsOccupied(destination, boardState)) {
+      possibleMoves.push(destination)
+    } else if(tileIsOccupiedByOpponent(destination, boardState, rook.team)) {
+      possibleMoves.push(destination)
+      break;
+    } else {
+      break;
+    }
+  } 
+  // Bottom movement
+  for(let i = 1; i < 8; i++) {
+    const destination: Position = {x: rook.position.x, y: rook.position.y - i};
+    if(!tileIsOccupied(destination, boardState)) {
+      possibleMoves.push(destination)
+    } else if(tileIsOccupiedByOpponent(destination, boardState, rook.team)) {
+      possibleMoves.push(destination)
+      break;
+    } else {
+      break;
+    }
+  } 
+
+  // Left movement
+  for(let i = 1; i < 8; i++) {
+    const destination: Position = {x: rook.position.x - i, y: rook.position.y};
+    if(!tileIsOccupied(destination, boardState)) {
+      possibleMoves.push(destination)
+    } else if(tileIsOccupiedByOpponent(destination, boardState, rook.team)) {
+      possibleMoves.push(destination)
+      break;
+    } else {
+      break;
+    }
+  } 
+
+  // Right movement
+  for(let i = 1; i < 8; i++) {
+    const destination: Position = {x: rook.position.x + i, y: rook.position.y};
+    if(!tileIsOccupied(destination, boardState)) {
+      possibleMoves.push(destination)
+    } else if(tileIsOccupiedByOpponent(destination, boardState, rook.team)) {
+      possibleMoves.push(destination)
+      break;
+    } else {
+      break;
+    }
+  } 
+  return possibleMoves;
 }
