@@ -13,11 +13,12 @@ export default function Piece({ number, image, highlight } : Props) {
     number % 2 === 0 && "black-tile",
     number % 2 !== 0 && "white-tile",
     highlight && "tile-highlight",
+    image && "chess-piece-tile"
   ].filter(Boolean).join(" ");
   
-    return (
+    return ( 
       <div className={className}>
-        {image && <div style={{backgroundImage: `url(${image})`}} className='chess-piece' ></div>}
+        {image && <div style={{backgroundImage: `url(${image})`}} className="chess-piece" ></div>}
       </div>
     )
 

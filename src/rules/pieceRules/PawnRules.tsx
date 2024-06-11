@@ -55,7 +55,7 @@ export const pawnMove = (
   return false;
 }
 
-export const getPossibleMoves = (pawn: Tile, boardState: Tile[]) : Position[] => {
+export const getPossiblePawnMoves = (pawn: Tile, boardState: Tile[]) : Position[] => {
   const possibleMoves: Position[] = [];
 
   const specialRow = pawn.team === TeamType.WHITE ? 1 : 6;

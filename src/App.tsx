@@ -1,11 +1,10 @@
-import React from 'react';
 import "./App.css"
-import Board from "./components/Chessboard/Board"
+import Rules from "./components/Rules/Rules"
 
 function App() {
   return (
     <div id="app">
-      <Board />
+      <Rules />
     </div>
   );
 }
