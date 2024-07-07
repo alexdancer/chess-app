@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
   PieceType,
-  Position,
   TeamType,
   initialBoardState,
   samePosition,
@@ -22,6 +21,7 @@ import {
   rookMove,
 } from "../../rules/pieceRules";
 import { Tile } from "../../models/Tile";
+import { Position } from "../../models/Position";
 
 export default function Rules() {
   const [pieces, setPieces] = useState<Tile[]>(initialBoardState);
@@ -65,7 +65,7 @@ export default function Rules() {
           piece.position.x = destination.x;
           piece.position.y = destination.y;
           results.push(piece);
-        } else if (!samePosition(piece.position, { x: destination.x, y: destination.y - pawnDirection })) {
+        } else if (!samePosition(piece.position, new Position(destination.x, destination.y - pawnDirection))) {
           if (piece.type === PieceType.PAWN) {
             piece.enPassant = false;
           }
@@ -97,7 +97,7 @@ export default function Rules() {
             setPromotionPawn(piece);
           }
           results.push(piece);
-        } else if (!samePosition(piece.position, { x: destination.x, y: destination.y })) {
+        } else if (!samePosition(piece.position, new Position(destination.x, destination.y ))) {
           if (piece.type === PieceType.PAWN) {
             piece.enPassant = false;
           }

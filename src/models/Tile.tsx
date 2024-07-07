@@ -1,4 +1,5 @@
-import { PieceType, Position, TeamType } from "../Constants";
+import { PieceType, TeamType } from "../Constants";
+import { Position } from "./Position";
 
 export class Tile {
   image: string;
@@ -7,8 +8,8 @@ export class Tile {
   team: TeamType;
   enPassant?: boolean;
   possibleMoves?: Position[];
-  constructor(image: string, position: Position, type: PieceType, team: TeamType) {
-    this.image = image;
+  constructor(position: Position, type: PieceType, team: TeamType) {
+    this.image = `assets/images/${type}-${team}.png`;
     this.position = position;
     this.type = type;
     this.team = team;

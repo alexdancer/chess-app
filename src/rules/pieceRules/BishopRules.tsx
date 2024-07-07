@@ -1,6 +1,7 @@
-import { Position, TeamType, samePosition } from "../../Constants";
+import { TeamType, samePosition } from "../../Constants";
 import { tileIsEmptyOrOccupiedByOpponent, tileIsOccupied, tileIsOccupiedByOpponent } from "./GeneralRules";
 import { Tile } from "../../models/Tile";
+import { Position } from "../../models/Position";
 
 export const bishopMove = (
   initialPosition: Position,
@@ -11,7 +12,7 @@ export const bishopMove = (
   for (let i = 1; i < 8; i++) {
     // UP RIGHT MOVEMENT
     if (desiredPosition.x > initialPosition.x && desiredPosition.y > initialPosition.y) {
-      let passedPosition: Position = {x: initialPosition.x + i, y: initialPosition.y + i};
+      let passedPosition = new Position(initialPosition.x + i, initialPosition.y + i);
       // Checking if tile is destination tile
       if (samePosition(passedPosition, desiredPosition)) {
         // Dealing with destination tile
@@ -30,7 +31,7 @@ export const bishopMove = (
       desiredPosition.x > initialPosition.x &&
       desiredPosition.y < initialPosition.y
     ) {
-      let passedPosition: Position = {x: initialPosition.x + i, y: initialPosition.y - i};
+      let passedPosition: Position = new Position(initialPosition.x + i, initialPosition.y - i);
       // Checking if tile is the destination tile
       if (samePosition(passedPosition, desiredPosition)) {
         // Dealing with destination tile
@@ -45,7 +46,7 @@ export const bishopMove = (
     }
     // bottom left movement
     if (desiredPosition.x < initialPosition.x && desiredPosition.y < initialPosition.y) {
-      let passedPosition: Position = {x: initialPosition.x - i,y: initialPosition.y - i};
+      let passedPosition = new Position(initialPosition.x - i, initialPosition.y - i);
       // Checking if tile is the destination tile
       if (samePosition(passedPosition, desiredPosition)) {
         // Dealing with destination tile
@@ -60,7 +61,7 @@ export const bishopMove = (
     }
     // top left movement
     if (desiredPosition.x < initialPosition.x && desiredPosition.y > initialPosition.y) {
-      let passedPosition: Position = {x: initialPosition.x - i,y: initialPosition.y + i};
+      let passedPosition = new Position(initialPosition.x - i, initialPosition.y + i);
       // Checking if tile is the destination tile
       if (samePosition(passedPosition, desiredPosition)) {
         // Dealing with destination tile
@@ -82,7 +83,7 @@ export const getPossibleBishopMoves = (bishop: Tile, boardState: Tile[]): Positi
   
   // Upper right movement 
   for(let i = 1; i < 8; i++) {
-    const destination: Position = {x: bishop.position.x + i, y: bishop.position.y + i};
+    const destination = new Position(bishop.position.x + i, bishop.position.y + i);
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
@@ -96,7 +97,7 @@ export const getPossibleBishopMoves = (bishop: Tile, boardState: Tile[]): Positi
 
   // Bottom right movement 
   for(let i = 1; i < 8; i++) {
-    const destination: Position = {x: bishop.position.x + i, y: bishop.position.y - i};
+    const destination: Position = new Position(bishop.position.x + i, bishop.position.y - i);
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
@@ -110,7 +111,7 @@ export const getPossibleBishopMoves = (bishop: Tile, boardState: Tile[]): Positi
 
   // Bottom left movement 
   for(let i = 1; i < 8; i++) {
-    const destination: Position = {x: bishop.position.x - i, y: bishop.position.y - i};
+    const destination = new Position(bishop.position.x - i, bishop.position.y - i);
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
@@ -124,7 +125,7 @@ export const getPossibleBishopMoves = (bishop: Tile, boardState: Tile[]): Positi
 
   // Upper left movement 
   for(let i = 1; i < 8; i++) {
-    const destination: Position = {x: bishop.position.x - i, y: bishop.position.y + i};
+    const destination = new Position(bishop.position.x - i, bishop.position.y + i);
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
