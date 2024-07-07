@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
 import Piece from "../Piece/Piece";
 import "./Board.css";
-import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE, Tile, Position, samePosition } from "../../Constants"
+import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE, Position, samePosition } from "../../Constants"
+import { Tile } from "../../models/Tile";
 
 interface Props {
   playMove: (piece: Tile, position: Position) => boolean;

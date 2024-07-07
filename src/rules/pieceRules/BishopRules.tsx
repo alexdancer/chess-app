@@ -1,5 +1,6 @@
-import { Position, TeamType, Tile, samePosition } from "../../Constants";
+import { Position, TeamType, samePosition } from "../../Constants";
 import { tileIsEmptyOrOccupiedByOpponent, tileIsOccupied, tileIsOccupiedByOpponent } from "./GeneralRules";
+import { Tile } from "../../models/Tile";
 
 export const bishopMove = (
   initialPosition: Position,

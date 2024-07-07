@@ -1,5 +1,6 @@
-import { Position, TeamType, Tile } from "../../Constants";
+import { Position, TeamType } from "../../Constants";
 import { tileIsEmptyOrOccupiedByOpponent } from "./GeneralRules";
+import { Tile } from "../../models/Tile";
 
 export const knightMove =(
   initialPosition: Position,

@@ -1,5 +1,6 @@
-import { PieceType, Position, TeamType, Tile, samePosition } from "../../Constants";
+import { Position, TeamType, samePosition } from "../../Constants";
 import { tileIsOccupied, tileIsOccupiedByOpponent } from "./GeneralRules";
+import { Tile } from "../../models/Tile";
 
 
 export const pawnMove = (

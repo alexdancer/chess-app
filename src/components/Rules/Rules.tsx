@@ -3,7 +3,6 @@ import {
   PieceType,
   Position,
   TeamType,
-  Tile,
   initialBoardState,
   samePosition,
 } from "../../Constants";
@@ -22,6 +21,7 @@ import {
   queenMove,
   rookMove,
 } from "../../rules/pieceRules";
+import { Tile } from "../../models/Tile";
 
 export default function Rules() {
   const [pieces, setPieces] = useState<Tile[]>(initialBoardState);
