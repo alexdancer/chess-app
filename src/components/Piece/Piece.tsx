@@ -23,3 +23,4 @@ export default function Piece({ number, image, highlight } : Props) {
     )
 
 }
+

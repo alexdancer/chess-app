@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  PieceType,
-  TeamType,
-  initialBoardState,
-  samePosition,
-} from "../../Constants";
+import { initialBoardState } from "../../Constants";
 import Board from "../Chessboard/Board";
 import {
   bishopMove,
@@ -22,6 +17,8 @@ import {
 } from "../../rules/pieceRules";
 import { Tile } from "../../models/Tile";
 import { Position } from "../../models/Position";
+import { PieceType, TeamType } from "../../Types";
+import { Pawn } from "../../models/Pawn";
 
 export default function Rules() {
   const [pieces, setPieces] = useState<Tile[]>(initialBoardState);
@@ -60,14 +57,16 @@ export default function Rules() {
 
     if (enPassantMove) {
       const updatedPieces = pieces.reduce((results, piece) => {
-        if (samePosition(piece.position, playedPiece.position)) {
-          piece.enPassant = false;
+        if (piece.samePiecePosition(playedPiece)) {
+          if (piece.isPawn) {
+            (piece as Pawn).enPassant = false;
+          }
           piece.position.x = destination.x;
           piece.position.y = destination.y;
           results.push(piece);
-        } else if (!samePosition(piece.position, new Position(destination.x, destination.y - pawnDirection))) {
-          if (piece.type === PieceType.PAWN) {
-            piece.enPassant = false;
+        } else if (!piece.samePosition(new Position(destination.x, destination.y - pawnDirection))) {
+          if (piece.isPawn) {
+            (piece as Pawn).enPassant = false;
           }
           results.push(piece);
         }
@@ -82,11 +81,12 @@ export default function Rules() {
       // and if a piece is attacked, remove it
       const updatedPieces = pieces.reduce((results, piece) => {
         // if piece is moving
-        if (samePosition(piece.position, playedPiece.position)) {
+        if (piece.samePiecePosition(playedPiece)) {
           // special move
-          piece.enPassant =
-            Math.abs(playedPiece.position.y - destination.y) === 2 && piece.type === PieceType.PAWN;
-
+          if(piece.isPawn) {
+            (piece as Pawn).enPassant =
+              Math.abs(playedPiece.position.y - destination.y) === 2 && piece.type === PieceType.PAWN;
+          }
           piece.position.x = destination.x;
           piece.position.y = destination.y;
 
@@ -97,9 +97,9 @@ export default function Rules() {
             setPromotionPawn(piece);
           }
           results.push(piece);
-        } else if (!samePosition(piece.position, new Position(destination.x, destination.y ))) {
-          if (piece.type === PieceType.PAWN) {
-            piece.enPassant = false;
+        } else if (!piece.samePosition(new Position(destination.x, destination.y ))) {
+          if (piece.isPawn) {
+            (piece as Pawn).enPassant = false;
           }
           results.push(piece);
         }
@@ -134,7 +134,8 @@ export default function Rules() {
           (p) =>
             p.position.x === desiredPosition.x &&
             p.position.y === desiredPosition.y - pawnDirection &&
-            p.enPassant
+            p.isPawn && 
+            (p as Pawn).enPassant
         );
         if (piece) {
           return true;
@@ -230,7 +231,7 @@ export default function Rules() {
     }
 
     const updatedPieces = pieces.reduce((results, piece) => {
-      if(samePosition(piece.position, promotionPawn.position)) {
+      if(piece.samePiecePosition(promotionPawn)) {
         piece.type = pieceType
         const teamType = (piece.team === TeamType.WHITE) ? "white" : "black";
         let image = "";
