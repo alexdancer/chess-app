@@ -1,4 +1,5 @@
 import { PieceType, TeamType } from "./Types";
+import { Chessboard } from "./models/Chessboard";
 import { Pawn } from "./models/Pawn";
 import { Position } from "./models/Position";
 import { Tile } from "./models/Tile";
@@ -8,7 +9,7 @@ export const HORIZONTAL_AXIS = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 export const GRID_SIZE = 100;
 
-export const initialBoardState: Tile[] = [
+export const initialBoard: Chessboard = new Chessboard([
   // BLACK PIECES
   new Tile(
     new Position(0, 7),
@@ -157,4 +158,4 @@ export const initialBoardState: Tile[] = [
     new Position(7, 1),
     TeamType.WHITE
   ),
-];
+]);
