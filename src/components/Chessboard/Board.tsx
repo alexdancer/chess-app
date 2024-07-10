@@ -87,7 +87,7 @@ export default function Board({ playMove, pieces} : Props) {
       );
 
       if (currentPiece) {
-        var success = playMove(currentPiece, new Position(x, y)); 
+        var success = playMove(currentPiece.clone(), new Position(x, y)); 
         
         if(!success) {
           // Resets the piece position if wrong move

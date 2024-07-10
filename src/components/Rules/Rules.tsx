@@ -3,12 +3,6 @@ import { initialBoard } from "../../Constants";
 import Board from "../Chessboard/Board";
 import {
   bishopMove,
-  getPossibleBishopMoves,
-  getPossibleKingMoves,
-  getPossibleKnightMoves,
-  getPossiblePawnMoves,
-  getPossibleQueenMoves,
-  getPossibleRookMoves,
   kingMove,
   knightMove,
   pawnMove,
@@ -35,6 +29,8 @@ export default function Rules() {
   }
 
   function playMove(playedPiece: Tile, destination: Position): boolean {
+    let playedMoveIsValid = false;
+
     const validMove = isValidMove(
       playedPiece.position,
       destination,
@@ -49,8 +45,12 @@ export default function Rules() {
       playedPiece.team
     );
 
-    // playing the move
-    board.playMove(enPassantMove, validMove, playedPiece, destination);
+    // playMove modifies the board
+    setBoard((previousBoard) => {
+      // playing the move
+      playedMoveIsValid = board.playMove(enPassantMove, validMove, playedPiece, destination);
+      return board.clone();
+    });
 
     // Promoting pawn
     let promotionRow = playedPiece.team === TeamType.WHITE ? 7 : 0;
@@ -60,7 +60,7 @@ export default function Rules() {
       setPromotionPawn(playedPiece);
     }
 
-    return true;
+    return playedMoveIsValid;
   }
 
   // does the special enPassant move for pawn

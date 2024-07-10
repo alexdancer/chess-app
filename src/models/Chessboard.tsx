@@ -87,6 +87,7 @@ export class Chessboard {
               Math.abs(playedPiece.position.y - destination.y) === 2 &&
               piece.type === PieceType.PAWN;
           }
+
           piece.position.x = destination.x;
           piece.position.y = destination.y;
 
@@ -107,5 +108,9 @@ export class Chessboard {
     }
 
     return true;
+  }
+
+  clone(): Chessboard {
+    return new Chessboard(this.pieces.map(p => p.clone()));
   }
 }

@@ -7,44 +7,57 @@ export class Tile {
   type: PieceType;
   team: TeamType;
   possibleMoves?: Position[];
-  constructor(position: Position, type: PieceType, team: TeamType) {
+  constructor(
+    position: Position,
+    type: PieceType,
+    team: TeamType,
+    possibleMoves: Position[] = []
+  ) {
     this.image = `assets/images/${type}-${team}.png`;
     this.position = position;
     this.type = type;
     this.team = team;
+    this.possibleMoves = possibleMoves;
   }
 
   get isPawn(): boolean {
-    return this.type === PieceType.PAWN
+    return this.type === PieceType.PAWN;
   }
 
   get isRook(): boolean {
-    return this.type === PieceType.ROOK
+    return this.type === PieceType.ROOK;
   }
 
   get isKnight(): boolean {
-    return this.type === PieceType.KNIGHT
+    return this.type === PieceType.KNIGHT;
   }
 
   get isBishop(): boolean {
-    return this.type === PieceType.BISHOP
+    return this.type === PieceType.BISHOP;
   }
 
   get isQueen(): boolean {
-    return this.type === PieceType.QUEEN
+    return this.type === PieceType.QUEEN;
   }
 
   get isKing(): boolean {
-    return this.type === PieceType.KING
+    return this.type === PieceType.KING;
   }
 
   samePiecePosition(otherPiece: Tile): boolean {
-    return this.position.samePosition(otherPiece.position)
+    return this.position.samePosition(otherPiece.position);
   }
 
   samePosition(otherPosition: Position): boolean {
-    return this.position.samePosition(otherPosition)
-
+    return this.position.samePosition(otherPosition);
   }
 
+  clone(): Tile {
+    return new Tile(
+      this.position.clone(),
+      this.type,
+      this.team,
+      this.possibleMoves?.map((m) => m.clone())
+    );
+  }
 }
