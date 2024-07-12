@@ -117,7 +117,7 @@ export const getPossibleQueenMoves = (queen: Tile, boardState: Tile[]): Position
   
     // Bottom right movement 
     for(let i = 1; i < 8; i++) {
-      const destination = new Position(queen.position.x, queen.position.y - i);
+      const destination = new Position(queen.position.x + i, queen.position.y - i);
   
       if(!tileIsOccupied(destination, boardState)) {
         possibleMoves.push(destination);

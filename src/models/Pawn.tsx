@@ -4,8 +4,13 @@ import { Tile } from './Tile'
 
 export class Pawn extends Tile {
   enPassant?: boolean;
-  constructor(position: Position, team: TeamType, enPassant?: boolean, possibleMoves: Position[] = []) {
-    super(position, PieceType.PAWN, team, possibleMoves)
+  constructor(
+    position: Position,
+    team: TeamType,
+    enPassant?: boolean,
+    possibleMoves: Position[] = []
+  ) {
+    super(position, PieceType.PAWN, team, possibleMoves);
     this.enPassant = enPassant;
   }
 

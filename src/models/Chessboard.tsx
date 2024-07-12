@@ -19,8 +19,62 @@ export class Chessboard {
   }
 
   calculateAllMoves() {
+    // calcluates the moves of all pieces for the possible moves
     for (const piece of this.pieces) {
       piece.possibleMoves = this.getValidMoves(piece, this.pieces);
+    }
+
+    this.checkKingMoves();
+  }
+
+  checkKingMoves() {
+    const king = this.pieces.find(p => p.isKing && p.team === TeamType.BLACK)
+
+    if(king?.possibleMoves === undefined) return;
+
+    // predicts the future moves of the king
+    for(const move of king.possibleMoves) {
+      const simulatedBoard = this.clone();
+
+      const pieceAtDestination = this.pieces.find(p => p.samePosition(move))
+
+      // if piece at destination remove the move
+      if(pieceAtDestination !== undefined) {
+        simulatedBoard.pieces = simulatedBoard.pieces.filter(p => !p.samePosition(move));
+      }
+
+      const simulatedKing = simulatedBoard.pieces.find(p => p.isKing && p.team === TeamType.BLACK)
+      // Tell the compilier that the simulatedKing is always present
+      simulatedKing!.position = move;
+
+      for(const enemy of simulatedBoard.pieces.filter(p => p.team === TeamType.WHITE)) {
+        enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces)
+      }
+
+      let safe = true; 
+
+      // checks if the king can make the move without being in check
+      for(const p of simulatedBoard.pieces) {
+        if (p.team === TeamType.BLACK) continue;
+
+        if (p.isPawn) {
+          const possiblePawnMoves = this.getValidMoves(p, simulatedBoard.pieces);
+
+          if (possiblePawnMoves?.some(
+            (ppm) => ppm.x !== p.position.x && ppm.samePosition(move))) {
+            safe = false;
+            break;
+          }
+        } else if (p.possibleMoves?.some((p) => p.samePosition(move))) {
+          safe = false;
+          break;
+        }
+      }
+      
+      // Remove from possible moves
+      if(!safe) {
+        king.possibleMoves = king.possibleMoves?.filter(m => !m.samePosition(move));
+      }
     }
   }
 
