@@ -111,7 +111,11 @@ export default function Board({ playMove, pieces} : Props) {
       );
       let image = piece ? piece.image : undefined;
 
-      let currentPiece = activePiece != null ? pieces.find(p => p.samePosition(grabPosition)) : undefined;
+      let currentPiece =
+        activePiece != null
+          ? pieces.find((p) => p.samePosition(grabPosition))
+          : undefined;
+          
       let highlight = currentPiece?.possibleMoves
         ? currentPiece.possibleMoves.some((p) =>
             p.samePosition(new Position(i, j))

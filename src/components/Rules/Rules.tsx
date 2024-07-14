@@ -21,21 +21,26 @@ export default function Rules() {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    updatePossibleMoves();
+    board.calculateAllMoves();
   });
 
-  function updatePossibleMoves() {
-    board.calculateAllMoves();
-  }
-
   function playMove(playedPiece: Tile, destination: Position): boolean {
+    // If the piece has no possible moves, return false
     if (playedPiece.possibleMoves === undefined) return false;
+
+    if (playedPiece.team === TeamType.WHITE && board.numberOfTurns % 2 !== 1)
+      return false; // only allow the white player to play
+    if (playedPiece.team === TeamType.BLACK && board.numberOfTurns % 2 !== 0)
+      return false; // only allow the black player to play
+
 
     let playedMoveIsValid = false;
 
-    const validMove = playedPiece.possibleMoves?.some(m => m.samePosition(destination));
+    const validMove = playedPiece.possibleMoves?.some((m) =>
+      m.samePosition(destination)
+    );
 
-    if(!validMove) return false;
+    if (!validMove) return false;
 
     const enPassantMove = isEnPassantMove(
       playedPiece.position,
@@ -46,9 +51,17 @@ export default function Rules() {
 
     // playMove modifies the board
     setBoard((previousBoard) => {
+      const clonedBoard = previousBoard.clone();
+      clonedBoard.numberOfTurns += 1;
       // playing the move
-      playedMoveIsValid = board.playMove(enPassantMove, validMove, playedPiece, destination);
-      return board.clone();
+      playedMoveIsValid = clonedBoard.playMove(
+        enPassantMove,
+        validMove,
+        playedPiece,
+        destination
+      );
+      
+      return clonedBoard;
     });
 
     // Promoting pawn
@@ -60,7 +73,7 @@ export default function Rules() {
         const clonedPlayedPiece = playedPiece.clone();
         clonedPlayedPiece.position = destination.clone();
         return clonedPlayedPiece;
-      })
+      });
     }
 
     return playedMoveIsValid;
@@ -158,6 +171,7 @@ export default function Rules() {
 
   return (
     <>
+    <p style={{color: 'white', fontSize: "24px"}}>{board.numberOfTurns}</p>
       <div id="pawn-promotion-modal" className="hidden" ref={modalRef}>
         <div className="modal-body">
           <img

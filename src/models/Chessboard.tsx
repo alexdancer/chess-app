@@ -13,9 +13,15 @@ import { Tile } from "./Tile";
 
 export class Chessboard {
   pieces: Tile[];
+  numberOfTurns: number;
 
-  constructor(pieces: Tile[]) {
+  constructor(pieces: Tile[], numberOfTurns: number) {
     this.pieces = pieces;
+    this.numberOfTurns = numberOfTurns;
+  }
+
+  get currentTeam(): TeamType {
+    return this.numberOfTurns % 2 === 0 ? TeamType.BLACK : TeamType.WHITE;
   }
 
   calculateAllMoves() {
@@ -24,11 +30,15 @@ export class Chessboard {
       piece.possibleMoves = this.getValidMoves(piece, this.pieces);
     }
 
-    this.checkKingMoves();
+    this.checkCurrentTeamMoves(); // checks if the current team moves are valid
+
+    for(const piece of this.pieces.filter(p => p.team !== this.currentTeam)) {
+      piece.possibleMoves = [];
+    }
   }
 
   checkKingMoves() {
-    const king = this.pieces.find(p => p.isKing && p.team === TeamType.BLACK)
+    const king = this.pieces.find(p => p.isKing && p.team === this.currentTeam);
 
     if(king?.possibleMoves === undefined) return;
 
@@ -36,18 +46,18 @@ export class Chessboard {
     for(const move of king.possibleMoves) {
       const simulatedBoard = this.clone();
 
-      const pieceAtDestination = this.pieces.find(p => p.samePosition(move))
+      const pieceAtDestination = simulatedBoard.pieces.find(p => p.samePosition(move))
 
       // if piece at destination remove the move
       if(pieceAtDestination !== undefined) {
         simulatedBoard.pieces = simulatedBoard.pieces.filter(p => !p.samePosition(move));
       }
 
-      const simulatedKing = simulatedBoard.pieces.find(p => p.isKing && p.team === TeamType.BLACK)
+      const simulatedKing = simulatedBoard.pieces.find(p => p.isKing && p.team === simulatedBoard.currentTeam)
       // Tell the compilier that the simulatedKing is always present
       simulatedKing!.position = move;
 
-      for(const enemy of simulatedBoard.pieces.filter(p => p.team === TeamType.WHITE)) {
+      for(const enemy of simulatedBoard.pieces.filter(p => p.team !== simulatedBoard.currentTeam)) {
         enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces)
       }
 
@@ -55,7 +65,7 @@ export class Chessboard {
 
       // checks if the king can make the move without being in check
       for(const p of simulatedBoard.pieces) {
-        if (p.team === TeamType.BLACK) continue;
+        if (p.team === simulatedBoard.currentTeam) continue;
 
         if (p.isPawn) {
           const possiblePawnMoves = this.getValidMoves(p, simulatedBoard.pieces);
@@ -74,6 +84,65 @@ export class Chessboard {
       // Remove from possible moves
       if(!safe) {
         king.possibleMoves = king.possibleMoves?.filter(m => !m.samePosition(move));
+      }
+    }
+  }
+
+  checkCurrentTeamMoves() {
+    for(const piece of this.pieces.filter(p => p.team === this.currentTeam)) {
+      if(piece.possibleMoves === undefined) continue;
+
+      // Simulate all the piece moves
+      for (const move of piece.possibleMoves) {
+        const simulatedBoard = this.clone();
+
+        // removes the piece at destination
+        simulatedBoard.pieces = simulatedBoard.pieces.filter(p => !p.samePosition(move));
+        
+        // gets the piece on the cloned board
+        const clonedPiece = simulatedBoard.pieces.find((p) =>
+          p.samePiecePosition(piece)
+        )!; // Used the ! to tell the compiler that the piece is always present
+        clonedPiece.position = move.clone();
+
+        // gets the king on the cloned board
+        const clonedKing = simulatedBoard.pieces.find(p => p.isKing && p.team === simulatedBoard.currentTeam)!;
+
+        // loops through all enemy pieces and updates their possible moves
+        // checks if either king is in danger
+        // for (const enemy of simulatedBoard.pieces.filter(
+        //   (p) => p.team !== simulatedBoard.currentTeam )) {
+        //   enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces);
+
+        //   if(enemy.isPawn) {
+        //     if (
+        //       enemy.possibleMoves.some(
+        //         (m) =>
+        //           m.x !== enemy.position.x &&
+        //           m.samePosition(clonedKing.position) 
+        //       )) {
+        //         piece.possibleMoves = piece.possibleMoves?.filter(m => !m.samePosition(move));
+        //     }
+        //   } else {
+        //     if(enemy.possibleMoves.some(m => m.samePosition(clonedKing.position))) {
+        //       piece.possibleMoves = piece.possibleMoves?.filter(m => !m.samePosition(move));
+        //     }
+        //   }
+        // }
+
+        for (const enemy of simulatedBoard.pieces.filter((p) => p.team !== simulatedBoard.currentTeam)) {
+          enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces);
+        
+          const isDangerousMove = enemy.possibleMoves.some(m => {
+            const isPawnConditionMet = enemy.isPawn ? m.x !== enemy.position.x : true;
+            return isPawnConditionMet && m.samePosition(clonedKing.position);
+          });
+        
+          if (isDangerousMove) {
+            piece.possibleMoves = piece.possibleMoves?.filter(m => !m.samePosition(move));
+            break; // Assuming you can break after finding the first dangerous move for efficiency
+          }
+        }
       }
     }
   }
@@ -165,6 +234,9 @@ export class Chessboard {
   }
 
   clone(): Chessboard {
-    return new Chessboard(this.pieces.map(p => p.clone()));
+    return new Chessboard(
+      this.pieces.map((p) => p.clone()),
+      this.numberOfTurns
+    );
   }
 }

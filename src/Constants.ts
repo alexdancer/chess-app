@@ -158,4 +158,4 @@ export const initialBoard: Chessboard = new Chessboard([
     new Position(7, 1),
     TeamType.WHITE
   ),
-]);
+], 1);
