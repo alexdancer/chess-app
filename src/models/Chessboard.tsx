@@ -1,5 +1,6 @@
 import { PieceType, TeamType } from "../Types";
 import {
+  getCastleMoves,
   getPossibleBishopMoves,
   getPossibleKingMoves,
   getPossibleKnightMoves,
@@ -28,6 +29,12 @@ export class Chessboard {
     // calcluates the moves of all pieces for the possible moves
     for (const piece of this.pieces) {
       piece.possibleMoves = this.getValidMoves(piece, this.pieces);
+    }
+
+    // Calculates the castle moves
+    for(const king of this.pieces.filter(p => p.isKing)) {
+      if(king.possibleMoves === undefined) continue;
+      king.possibleMoves = [...king.possibleMoves, ...getCastleMoves(king, this.pieces)];
     }
 
     this.checkCurrentTeamMoves(); // checks if the current team moves are valid
@@ -108,28 +115,6 @@ export class Chessboard {
         // gets the king on the cloned board
         const clonedKing = simulatedBoard.pieces.find(p => p.isKing && p.team === simulatedBoard.currentTeam)!;
 
-        // loops through all enemy pieces and updates their possible moves
-        // checks if either king is in danger
-        // for (const enemy of simulatedBoard.pieces.filter(
-        //   (p) => p.team !== simulatedBoard.currentTeam )) {
-        //   enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces);
-
-        //   if(enemy.isPawn) {
-        //     if (
-        //       enemy.possibleMoves.some(
-        //         (m) =>
-        //           m.x !== enemy.position.x &&
-        //           m.samePosition(clonedKing.position) 
-        //       )) {
-        //         piece.possibleMoves = piece.possibleMoves?.filter(m => !m.samePosition(move));
-        //     }
-        //   } else {
-        //     if(enemy.possibleMoves.some(m => m.samePosition(clonedKing.position))) {
-        //       piece.possibleMoves = piece.possibleMoves?.filter(m => !m.samePosition(move));
-        //     }
-        //   }
-        // }
-
         for (const enemy of simulatedBoard.pieces.filter((p) => p.team !== simulatedBoard.currentTeam)) {
           enemy.possibleMoves = simulatedBoard.getValidMoves(enemy, simulatedBoard.pieces);
         
@@ -174,6 +159,10 @@ export class Chessboard {
   ): boolean {
     const pawnDirection = playedPiece.team === TeamType.WHITE ? 1 : -1;
 
+    // If move is a castle move
+    
+
+
     if (enPassantMove) {
       this.pieces = this.pieces.reduce((results, piece) => {
         if (piece.samePiecePosition(playedPiece)) {
@@ -182,6 +171,7 @@ export class Chessboard {
           }
           piece.position.x = destination.x;
           piece.position.y = destination.y;
+          piece.hasMoved = true;
           results.push(piece);
         } else if (
           !piece.samePosition(
@@ -213,6 +203,7 @@ export class Chessboard {
 
           piece.position.x = destination.x;
           piece.position.y = destination.y;
+          piece.hasMoved = true;
 
           results.push(piece);
         } else if (!piece.samePosition(destination)) {

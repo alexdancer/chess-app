@@ -50,8 +50,8 @@ export default function Rules() {
     );
 
     // playMove modifies the board
-    setBoard((previousBoard) => {
-      const clonedBoard = previousBoard.clone();
+    setBoard(() => {
+      const clonedBoard = board.clone();
       clonedBoard.numberOfTurns += 1;
       // playing the move
       playedMoveIsValid = clonedBoard.playMove(
@@ -149,7 +149,7 @@ export default function Rules() {
       const clonedBoard = board.clone();
       clonedBoard.pieces = clonedBoard.pieces.reduce((results, piece) => {
         if (piece.samePiecePosition(promotionPawn)) {
-          results.push(new Tile(piece.position.clone(), pieceType, piece.team));
+          results.push(new Tile(piece.position.clone(), pieceType, piece.team, true));
         } else {
           results.push(piece);
         }

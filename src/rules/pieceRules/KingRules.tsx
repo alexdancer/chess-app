@@ -158,3 +158,43 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
 
   return possibleMoves;
 }
+
+export const getCastleMoves = (king: Tile, boardState: Tile[]): Position[] => {
+  const possibleMoves: Position[] = [];
+
+  if (king.hasMoved) return possibleMoves;
+
+  const rooks = boardState.filter(p => p.isRook && p.team === king.team && !p.hasMoved);
+  const enemyPieces = boardState.filter(p => p.team !== king.team);
+
+  for (const rook of rooks) {
+    const direction = (rook.position.x - king.position.x > 0) ? 1 : -1;
+    let pathClear = true;
+    let tilesBetween = [];
+
+    // Check if path between king and rook is clear
+    for (let x = king.position.x + direction; x !== rook.position.x; x += direction) {
+      if (boardState.some(p => p.position.x === x && p.position.y === king.position.y)) {
+        pathClear = false;
+        break;
+      }
+      tilesBetween.push(new Position(x, king.position.y));
+    }
+
+    if (!pathClear) continue;
+
+    // Check if any tile between king and rook is under attack
+    let pathSafe = !tilesBetween.some(tile => 
+      enemyPieces.some(enemy => 
+        enemy.possibleMoves?.some(move => move.samePosition(tile))
+      )
+    );
+
+    if (pathSafe) {
+      possibleMoves.push(rook.position.clone());
+    }
+  }
+
+  return possibleMoves;
+
+}
