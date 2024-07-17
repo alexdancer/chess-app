@@ -158,9 +158,41 @@ export class Chessboard {
     destination: Position
   ): boolean {
     const pawnDirection = playedPiece.team === TeamType.WHITE ? 1 : -1;
+    const destinationPiece = this.pieces.find(p => p.samePosition(destination));
 
-    // If move is a castle move
+    // Castling logic
+    this.pieces = this.pieces.map(p => {
+      if(p.samePiecePosition(playedPiece)) {
+        p.hasMoved = true; // Mark the piece as having moved
+      }
+      return p;
+    });
     
+    // Step 3: Check the movement state before allowing a castle move
+    if (
+      playedPiece.isKing &&
+      !playedPiece.hasMoved && // Check that the king hasn't moved
+      destinationPiece?.isRook &&
+      !destinationPiece.hasMoved && // Check that the rook hasn't moved
+      destinationPiece.team === playedPiece.team
+    ) {
+      const direction = (destinationPiece.position.x - playedPiece.position.x > 0) ? 1 : -1;
+      const newKingPosition = playedPiece.position.x + direction * 2;
+    
+      this.pieces = this.pieces.map(p => {
+        if(p.samePiecePosition(playedPiece)) {
+          p.position.x = newKingPosition;
+          p.hasMoved = true;
+        } else if(p.samePiecePosition(destinationPiece)) {
+          p.position.x = newKingPosition - direction;
+          p.hasMoved = true;
+        }
+    
+        return p;
+      })
+    
+      return true;
+    }
 
 
     if (enPassantMove) {
