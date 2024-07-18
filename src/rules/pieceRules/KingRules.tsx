@@ -53,6 +53,9 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
   // Top movement
   for(let i = 1; i < 2; i++) {
     const destination = new Position(king.position.x, king.position.y + i);
+
+    if(checkIfMoveIsOut(destination)) break;
+
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination)
     } else if(tileIsOccupiedByOpponent(destination, boardState, king.team)) {
@@ -65,6 +68,9 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
   // Bottom movement
   for(let i = 1; i < 2; i++) {
     const destination = new Position(king.position.x, king.position.y - i);
+
+    if(checkIfMoveIsOut(destination)) break;
+
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination)
     } else if(tileIsOccupiedByOpponent(destination, boardState, king.team)) {
@@ -91,6 +97,9 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
   // Right movement
   for(let i = 1; i < 2; i++) {
     const destination = new Position(king.position.x + i, king.position.y);
+
+    if(checkIfMoveIsOut(destination)) break;
+
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination)
     } else if(tileIsOccupiedByOpponent(destination, boardState, king.team)) {
@@ -99,10 +108,13 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
     } else {
       break;
     }
-  } 
+  }
 
+  // Top right movement
   for(let i = 1; i < 2; i++) {
     const destination = new Position(king.position.x + i, king.position.y + i);
+
+    if(checkIfMoveIsOut(destination)) break;
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
@@ -117,6 +129,7 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
   // Bottom right movement 
   for(let i = 1; i < 2; i++) {
     const destination = new Position(king.position.x + i, king.position.y - i);
+    if(checkIfMoveIsOut(destination)) break;
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
@@ -131,6 +144,7 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
   // Bottom left movement 
   for(let i = 1; i < 2; i++) {
     const destination = new Position(king.position.x - i, king.position.y - i);
+    if(checkIfMoveIsOut(destination)) break;
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
@@ -145,6 +159,8 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
   // Upper left movement 
   for(let i = 1; i < 2; i++) {
     const destination = new Position(king.position.x - i, king.position.y + i);
+  
+    if(checkIfMoveIsOut(destination)) break;
 
     if(!tileIsOccupied(destination, boardState)) {
       possibleMoves.push(destination);
@@ -157,6 +173,17 @@ export const getPossibleKingMoves = (king: Tile, boardState: Tile[]): Position[]
   }
 
   return possibleMoves;
+}
+
+// don't include moves outside the board  
+function checkIfMoveIsOut(destination: Position): boolean {
+  if (
+    destination.x < 0 ||
+    destination.x > 7 ||
+    destination.y < 0 ||
+    destination.y > 7
+  ) return true;
+  return false;
 }
 
 export const getCastleMoves = (king: Tile, boardState: Tile[]): Position[] => {

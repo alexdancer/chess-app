@@ -16,13 +16,10 @@ import { Pawn } from "../../models/Pawn";
 import { Chessboard } from "../../models/Chessboard";
 
 export default function Rules() {
-  const [board, setBoard] = useState<Chessboard>(initialBoard);
+  const [board, setBoard] = useState<Chessboard>(initialBoard.clone());
   const [promotionPawn, setPromotionPawn] = useState<Tile>();
   const modalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    board.calculateAllMoves();
-  });
+  const checkmateModalRef = useRef<HTMLDivElement>(null);
 
   function playMove(playedPiece: Tile, destination: Position): boolean {
     // If the piece has no possible moves, return false
@@ -60,6 +57,10 @@ export default function Rules() {
         playedPiece,
         destination
       );
+
+      if(clonedBoard.winningTeam !== undefined) {
+        checkmateModalRef.current?.classList.remove("hidden");
+      }
       
       return clonedBoard;
     });
@@ -169,10 +170,15 @@ export default function Rules() {
     return promotionPawn?.team === TeamType.WHITE ? "white" : "black";
   }
 
+  function restartGame() {
+    checkmateModalRef.current?.classList.add("hidden");
+    setBoard(initialBoard.clone());
+  }
+
   return (
     <>
-    <p style={{color: 'white', fontSize: "24px"}}>{board.numberOfTurns}</p>
-      <div id="pawn-promotion-modal" className="hidden" ref={modalRef}>
+      <p style={{color: 'white', fontSize: "24px", textAlign: "center"}}>Total Turns: {board.numberOfTurns}</p>
+      <div  className="modal hidden" ref={modalRef}>
         <div className="modal-body">
           <img
             onClick={() => promotePawn(PieceType.ROOK)}
@@ -194,6 +200,14 @@ export default function Rules() {
             src={`/assets/images/queen-${promotionTeamType()}.png`}
             alt=""
           />
+        </div>
+      </div>
+      <div className="modal hidden" ref={checkmateModalRef}>
+        <div className="modal-body">
+          <div className="checkmate-body">
+            <span>The winnin team is {board.winningTeam === TeamType.WHITE ? "white" : "black"}!</span>
+            <button onClick={restartGame}>Play again</button>
+          </div>
         </div>
       </div>
       <Board playMove={playMove} pieces={board.pieces} />

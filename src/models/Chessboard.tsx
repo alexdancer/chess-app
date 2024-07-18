@@ -15,6 +15,7 @@ import { Tile } from "./Tile";
 export class Chessboard {
   pieces: Tile[];
   numberOfTurns: number;
+  winningTeam?: TeamType;
 
   constructor(pieces: Tile[], numberOfTurns: number) {
     this.pieces = pieces;
@@ -39,9 +40,21 @@ export class Chessboard {
 
     this.checkCurrentTeamMoves(); // checks if the current team moves are valid
 
+    // removes the possible moves of the team that is not playing
     for(const piece of this.pieces.filter(p => p.team !== this.currentTeam)) {
       piece.possibleMoves = [];
     }
+
+    // Check if team has moves otherwise, checkmate
+    if (
+      this.pieces
+        .filter((p) => p.team === this.currentTeam)
+        .some(
+          (p) => p.possibleMoves !== undefined && p.possibleMoves.length > 0
+        )
+    ) return;
+    
+    this.winningTeam = this.currentTeam === TeamType.WHITE ? TeamType.BLACK : TeamType.WHITE;
   }
 
   checkKingMoves() {
@@ -168,7 +181,6 @@ export class Chessboard {
       return p;
     });
     
-    // Step 3: Check the movement state before allowing a castle move
     if (
       playedPiece.isKing &&
       !playedPiece.hasMoved && // Check that the king hasn't moved

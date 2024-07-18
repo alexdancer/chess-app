@@ -191,3 +191,5 @@ export const initialBoard: Chessboard = new Chessboard([
     false
   ),
 ], 1);
+
+initialBoard.calculateAllMoves();

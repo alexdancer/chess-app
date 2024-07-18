@@ -7,19 +7,23 @@
   background-color: blue;
 }
 
-#pawn-promotion-modal {
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
 }
 
-#pawn-promotion-modal.hidden {
+.modal.hidden {
   display: none;
 }
 
-#pawn-promotion-modal > .modal-body {
+.modal > .modal-body {
   position: absolute;
   top: calc(50% - 150px);
   left: calc(50% - 400px);
@@ -31,13 +35,37 @@
   background-color: rgba(0,0,0,0.8); 
 }
 
-#pawn-promotion-modal > .modal-body > img {
+.modal > .modal-body > img {
   height: 120px;
   padding: 20px;
   border-radius: 50%;
 }
 
-#pawn-promotion-modal > .modal-body > img:hover {
+.modal > .modal-body > img:hover {
   background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+}
+
+.modal > .modal-body > .checkmate-body {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.modal > .modal-body > .checkmate-body > span {
+  font-size: 36px;
+  color: white;
+}
+
+.modal > .modal-body > .checkmate-body > button {
+  background-color: #3b5f87;
+  border: none;
+  border-radius: 8px;
+  padding: 20px 42px;
+  font-size : 36px;
+  color: white;
+}
+
+.modal > .modal-body > .checkmate-body > button:hover {
   cursor: pointer;
 }
